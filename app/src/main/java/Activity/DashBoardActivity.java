@@ -25,8 +25,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import Others.CircleTransform;
 import employee.guardian.psak.vsolv.R;
-import fragments.HomeFragment;
-import fragments.MoviesFragment;
+import fragments.AddSchedule;
+import fragments.ApprovalFragment;
 import fragments.NotificationsFragment;
 import fragments.PhotosFragment;
 import fragments.SettingsFragment;
@@ -195,7 +195,7 @@ public class DashBoardActivity extends AppCompatActivity {
         switch (navItemIndex) {
             case 0:
                 // home
-                HomeFragment homeFragment = new HomeFragment();
+                ApprovalFragment homeFragment = new ApprovalFragment();
                 return homeFragment;
             case 1:
                 // photos
@@ -203,7 +203,7 @@ public class DashBoardActivity extends AppCompatActivity {
                 return photosFragment;
             case 2:
                 // movies fragment
-                MoviesFragment moviesFragment = new MoviesFragment();
+                AddSchedule moviesFragment = new AddSchedule();
                 return moviesFragment;
             case 3:
                 // notifications fragment
@@ -215,7 +215,7 @@ public class DashBoardActivity extends AppCompatActivity {
                 SettingsFragment settingsFragment = new SettingsFragment();
                 return settingsFragment;
             default:
-                return new HomeFragment();
+                return new ApprovalFragment();
         }
     }
 

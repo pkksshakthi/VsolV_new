@@ -18,9 +18,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
+import Others.POJO;
 import employee.guardian.psak.vsolv.R;
 
 public class LoginActitivty extends AppCompatActivity {
@@ -38,7 +42,6 @@ public class LoginActitivty extends AppCompatActivity {
         loginUserName = (EditText) findViewById(R.id.loginEmail);
         loginPassword = (EditText) findViewById(R.id.loginPassword);
         pd = new ProgressDialog(LoginActitivty.this);
-       // registerTextView = (TextView) findViewById(R.id.textViewEmailRegister);
         loginButton = (Button) findViewById(R.id.loginButton);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -58,20 +61,32 @@ public class LoginActitivty extends AppCompatActivity {
         String response = null;
 
         final String finalResponse = response;
-        startActivity(new Intent(getApplicationContext(), DashBoardActivity.class));
+
         StringRequest postRequest = new StringRequest(Request.Method.POST, URL,
                 new Response.Listener<String>()
                 {
                     @Override
                     public void onResponse(String response) {
-
+                        Log.v("Login",""+response);
                         pd.hide();
-                        showSnackbar(response);
+                        //showSnackbar(response);
 
-                        if(response.equals("Login")) {
+                        try {
+                            JSONObject jsonObject=new JSONObject(response);
+                            String data=jsonObject.getString("MESSAGE");
+                            POJO.setName(data);
+                            if (POJO.getName().equals("SUCCESS")){
+                                startActivity(new Intent(getApplicationContext(), DashBoardActivity.class));
+                            }else{
+                                Log.v("Login","Faild");
+                            }
 
-                            startActivity(new Intent(getApplicationContext(), DashBoardActivity.class));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
+
+
+
 
 
                     }
@@ -83,7 +98,7 @@ public class LoginActitivty extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         // error
                         pd.hide();
-//                        Log.d("ErrorResponse", finalResponse);
+                      Log.d("ErrorResponse", String.valueOf(error));
 
                     }
                 }
@@ -92,8 +107,9 @@ public class LoginActitivty extends AppCompatActivity {
             protected Map<String, String> getParams()
             {
                 Map<String, String>  params = new HashMap<String, String>();
-                params.put("email", loginUserName.getText().toString());
+                params.put("username", loginUserName.getText().toString());
                 params.put("password", loginPassword.getText().toString());
+                params.put("Token", "7111797114100105971106449505132");
                 return params;
             }
         };
@@ -103,9 +119,9 @@ public class LoginActitivty extends AppCompatActivity {
 
 
     }
-    public void showSnackbar(String stringSnackbar){
-        snackbar.make(findViewById(android.R.id.content), stringSnackbar.toString(), Snackbar.LENGTH_SHORT)
-                .setActionTextColor(getResources().getColor(R.color.colorPrimary))
-                .show();
-    }
+//    public void showSnackbar(String stringSnackbar){
+//        snackbar.make(findViewById(android.R.id.content), stringSnackbar.toString(), Snackbar.LENGTH_SHORT)
+//                .setActionTextColor(getResources().getColor(R.color.colorPrimary))
+//                .show();
+//    }
 }
