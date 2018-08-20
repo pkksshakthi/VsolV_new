@@ -69,7 +69,7 @@ public class LoginActitivty extends AppCompatActivity {
                     public void onResponse(String response) {
                         Log.v("Login",""+response);
                         pd.hide();
-                        //shofghgfwSnackbar(response);
+                        //shofgwSnackbar(response);
 
                         try {
                             JSONObject jsonObject=new JSONObject(response);
