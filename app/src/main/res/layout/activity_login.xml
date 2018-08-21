@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="#736d69"
+    android:background="@drawable/bc"
     android:gravity="center"
     android:orientation="vertical"
     tools:context="Activity.LoginActitivty">
@@ -23,7 +23,7 @@
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:layout_marginTop="10dp"
-           android:src="@drawable/image"
+           android:src="@drawable/usericon"
             android:gravity="center"
            />
     </LinearLayout>
@@ -45,6 +45,7 @@
             android:ems="10"
             android:hint="Name"
             android:inputType="text"
+            android:text="vs0003"
             android:padding="15dp"
             android:textColorHint="?attr/colorButtonNormal" />
 
@@ -58,6 +59,7 @@
             android:background="@android:color/background_light"
             android:ems="10"
             android:hint="Password"
+            android:text="abcd"
             android:inputType="textWebPassword"
             android:padding="15dp"
             android:layout_marginTop="10dp"
@@ -81,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/remember"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                  />
 

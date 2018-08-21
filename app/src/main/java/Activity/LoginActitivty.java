@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,12 +29,14 @@ import Others.POJO;
 import employee.guardian.psak.vsolv.R;
 
 public class LoginActitivty extends AppCompatActivity {
+    private static final String ACCESS_TOKEN ="7111797114100105971106449505132" ;
     Button loginButton;
     EditText loginUserName, loginPassword;
     //TextView registerTextView;
-    private static String URL  ="http://vga.ramstertech.com/freebieslearning/login.php";
+    private static String URL = "http://192.168.1.25/bigflowdemo/login/";
     private Snackbar snackbar;
     private ProgressDialog pd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,67 +57,50 @@ public class LoginActitivty extends AppCompatActivity {
 
     }
 
-    private void loginRequest(){
+    private void loginRequest() {
         pd.setMessage("Signing In . . .");
         pd.show();
-        RequestQueue queue = Volley.newRequestQueue(LoginActitivty.this);
-        String response = null;
+       // RequestQueue queueQ = Volley.newRequestQueue(LoginActitivty.this);
+       // String response = null;
 
-        final String finalResponse = response;
-
-        StringRequest postRequest = new StringRequest(Request.Method.POST, URL,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.v("Login",""+response);
-                        pd.hide();
-                        //shofgwSnackbar(response);
-
-                        try {
-                            JSONObject jsonObject=new JSONObject(response);
-                            String data=jsonObject.getString("MESSAGE");
-                            POJO.setName(data);
-                            if (POJO.getName().equals("SUCCESS")){
-                                startActivity(new Intent(getApplicationContext(), DashBoardActivity.class));
-                            }else{
-                                Log.v("Login","Faild");
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-
-
-
-
-                    }
-
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // error
-                        pd.hide();
-                      Log.d("ErrorResponse", String.valueOf(error));
-
-                    }
-                }
-        ) {
+       // final String finalResponse = response;
+        StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
-            protected Map<String, String> getParams()
-            {
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put("username", loginUserName.getText().toString());
-                params.put("password", loginPassword.getText().toString());
-                params.put("Token", "7111797114100105971106449505132");
+            public void onResponse(String response) {
+                if (!response.equals(null)) {
+                    Log.e("Your Array Response", response);
+                } else {
+                    Log.e("Your Array Response", "Data Null");
+                }
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("error is ", "" + error);
+            }
+        }) {
+
+            //This is for Headers If You Needed
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/json");
+                params.put("token", ACCESS_TOKEN);
+                return params;
+            }
+
+            //Pass Your Parameters here
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+              params.put("username", loginUserName.getText().toString());
+               params.put("password", loginPassword.getText().toString());
                 return params;
             }
         };
-        postRequest.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(postRequest);
+        RequestQueue queueQ = Volley.newRequestQueue(getApplicationContext());
+        queueQ.add(request);
 
 
 
