@@ -10,6 +10,34 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -29,11 +57,11 @@ import Others.POJO;
 import employee.guardian.psak.vsolv.R;
 
 public class LoginActitivty extends AppCompatActivity {
-    private static final String ACCESS_TOKEN ="7111797114100105971106449505132" ;
+    private static final String ACCESS_TOKEN ="Token 7111797114100105971106449505132" ;
     Button loginButton;
     EditText loginUserName, loginPassword;
     //TextView registerTextView;
-    private static String URL = "http://192.168.1.25/bigflowdemo/login/";
+    private static String URL = "https://174.138.120.196/bigflowdemo/login/";
     private Snackbar snackbar;
     private ProgressDialog pd;
 
@@ -85,8 +113,8 @@ public class LoginActitivty extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("Content-Type", "application/json");
-                params.put("token", ACCESS_TOKEN);
+                params.put("content-type", "application/json");
+                params.put("authorization", ACCESS_TOKEN);
                 return params;
             }
 
@@ -99,11 +127,77 @@ public class LoginActitivty extends AppCompatActivity {
                 return params;
             }
         };
-        RequestQueue queueQ = Volley.newRequestQueue(getApplicationContext());
+        RequestQueue queueQ = Volley.newRequestQueue(getApplicationContext(),new HurlStack(null, getSocketFactory()));
         queueQ.add(request);
 
 
 
+    }
+
+    private SSLSocketFactory getSocketFactory() {
+
+        CertificateFactory cf = null;
+        try {
+            cf = CertificateFactory.getInstance("X.509");
+            InputStream caInput = getResources().openRawResource(R.raw.server);
+            Certificate ca;
+            try {
+                ca = cf.generateCertificate(caInput);
+                Log.e("CERT", "ca=" + ((X509Certificate) ca).getSubjectDN());
+            } finally {
+                caInput.close();
+            }
+
+
+            String keyStoreType = KeyStore.getDefaultType();
+            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("ca", ca);
+
+
+            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+            tmf.init(keyStore);
+
+
+            HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+
+                    Log.e("CipherUsed", session.getCipherSuite());
+                    return hostname.compareTo("174.138.120.196")==0; //The Hostname of your server
+
+                }
+            };
+
+
+            HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
+            SSLContext context = null;
+            context = SSLContext.getInstance("TLS");
+
+            context.init(null, tmf.getTrustManagers(), null);
+            HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+
+            SSLSocketFactory sf = context.getSocketFactory();
+
+
+            return sf;
+
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
+
+        return  null;
     }
 //    public void showSnackbar(String stringSnackbar){
 //        snackbar.make(findViewById(android.R.id.content), stringSnackbar.toString(), Snackbar.LENGTH_SHORT)
