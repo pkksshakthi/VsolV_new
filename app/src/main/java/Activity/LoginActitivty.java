@@ -9,10 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,6 +18,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +30,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -39,13 +39,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,11 +46,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import Others.POJO;
+import Others.UserDetails;
 import employee.guardian.psak.vsolv.R;
 
 public class LoginActitivty extends AppCompatActivity {
-    private static final String ACCESS_TOKEN ="Token 7111797114100105971106449505132" ;
+    private static final String ACCESS_TOKEN = "Token 7111797114100105971106449505132";
     Button loginButton;
     EditText loginUserName, loginPassword;
     //TextView registerTextView;
@@ -92,6 +85,22 @@ public class LoginActitivty extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                pd.hide();
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("MESSAGE");
+                    if (status.equals("SUCCESS")) {
+                        loadData(jsonObject);
+
+                    } else {
+
+                        Toast.makeText(getApplicationContext(), "Unsuccessful", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
                 if (!response.equals(null)) {
                     Log.e("Your Array Response", response);
                 } else {
@@ -107,13 +116,12 @@ public class LoginActitivty extends AppCompatActivity {
         }) {
             @Override
             public byte[] getBody() throws AuthFailureError {
-                JSONObject  jsonObject=new JSONObject();
+                JSONObject jsonObject = new JSONObject();
 
                 try {
-                    jsonObject.put("password","abcd");
-
-                    jsonObject.put("username","vs0003");
-                    Log.v("jsonObject",""+jsonObject);
+                    jsonObject.put("username", loginUserName.getText().toString());
+                    jsonObject.put("password", loginPassword.getText().toString());
+                    Log.v("jsonObject", "" + jsonObject);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -131,11 +139,22 @@ public class LoginActitivty extends AppCompatActivity {
             }
 
         };
-        RequestQueue queueQ = Volley.newRequestQueue(getApplicationContext(),new HurlStack(null, getSocketFactory()));
+        RequestQueue queueQ = Volley.newRequestQueue(getApplicationContext(), new HurlStack(null, getSocketFactory()));
         queueQ.add(request);
 
 
+    }
 
+    private void loadData(JSONObject jsonObject) throws JSONException {
+
+        JSONObject jsonObject1 = jsonObject.getJSONObject("DATA");
+        UserDetails.setEmpCode(jsonObject1.getString("employee_code"));
+        UserDetails.setDate(jsonObject1.getString("date"));
+        UserDetails.setEmpGid(jsonObject1.getString("employee_gid"));
+        UserDetails.setEmpName(jsonObject1.getString("employee_name"));
+        UserDetails.setEntyGid(jsonObject1.getString("entity_gid"));
+
+        startActivity(new Intent(getApplicationContext(), DashBoardActivity.class));
     }
 
     private SSLSocketFactory getSocketFactory() {
@@ -169,7 +188,7 @@ public class LoginActitivty extends AppCompatActivity {
                 public boolean verify(String hostname, SSLSession session) {
 
                     Log.e("CipherUsed", session.getCipherSuite());
-                    return hostname.compareTo("174.138.120.196")==0; //The Hostname of your server
+                    return hostname.compareTo("174.138.120.196") == 0; //The Hostname of your server
 
                 }
             };
@@ -201,7 +220,7 @@ public class LoginActitivty extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        return  null;
+        return null;
     }
 //    public void showSnackbar(String stringSnackbar){
 //        snackbar.make(findViewById(android.R.id.content), stringSnackbar.toString(), Snackbar.LENGTH_SHORT)

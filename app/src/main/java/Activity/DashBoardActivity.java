@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import Others.CircleTransform;
+import Others.UserDetails;
 import employee.guardian.psak.vsolv.R;
 import fragments.AddSchedule;
 import fragments.ApprovalFragment;
@@ -108,6 +109,20 @@ public class DashBoardActivity extends AppCompatActivity {
             CURRENT_TAG = TAG_HOME;
             loadHomeFragment();
         }
+
+
+       /*
+       *
+       *
+       *
+       * */
+
+
+
+
+
+
+
     }
 
     /***
@@ -117,14 +132,16 @@ public class DashBoardActivity extends AppCompatActivity {
      */
     private void loadNavHeader() {
         // name, website
-        txtName.setText("Sakthivel.P");
+        txtName.setText(UserDetails.getEmpName());
         txtWebsite.setText("Software Engineer");
 
         // loading header background image
-        Glide.with(this).load(urlNavHeaderBg)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imgNavHeaderBg);
+//        Glide.with(this).load(urlNavHeaderBg)
+//                .crossFade()
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .into(imgNavHeaderBg);
+
+
 
         // Loading profile image
         Glide.with(this).load(urlProfileImg)
