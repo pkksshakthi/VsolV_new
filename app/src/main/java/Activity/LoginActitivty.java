@@ -68,10 +68,21 @@ public class LoginActitivty extends AppCompatActivity {
         pd = new ProgressDialog(LoginActitivty.this);
         loginButton = (Button) findViewById(R.id.loginButton);
 
+     
+
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loginRequest();
+                String userName = loginUserName.getText().toString();
+                String Pasword = loginPassword.getText().toString();
+                if (userName.length() > 0 && Pasword.length() > 0) {
+                    loginRequest();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please enter the user name and password", Toast.LENGTH_LONG).show();
+                }
+
+
             }
         });
 
@@ -155,6 +166,7 @@ public class LoginActitivty extends AppCompatActivity {
         UserDetails.setEntyGid(jsonObject1.getString("entity_gid"));
 
         startActivity(new Intent(getApplicationContext(), DashBoardActivity.class));
+        finish();
     }
 
     private SSLSocketFactory getSocketFactory() {
