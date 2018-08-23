@@ -88,10 +88,7 @@ public class LoginActitivty extends AppCompatActivity {
     private void loginRequest() {
         pd.setMessage("Signing In . . .");
         pd.show();
-       // RequestQueue queueQ = Volley.newRequestQueue(LoginActitivty.this);
-       // String response = null;
 
-       // final String finalResponse = response;
         StringRequest request = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -108,8 +105,23 @@ public class LoginActitivty extends AppCompatActivity {
                 Log.e("error is ", "" + error);
             }
         }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                JSONObject  jsonObject=new JSONObject();
 
-            //This is for Headers If You Needed
+                try {
+                    jsonObject.put("password","abcd");
+
+                    jsonObject.put("username","vs0003");
+                    Log.v("jsonObject",""+jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                return jsonObject.toString().getBytes();
+            }
+
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -118,14 +130,6 @@ public class LoginActitivty extends AppCompatActivity {
                 return params;
             }
 
-            //Pass Your Parameters here
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-              params.put("username", loginUserName.getText().toString());
-               params.put("password", loginPassword.getText().toString());
-                return params;
-            }
         };
         RequestQueue queueQ = Volley.newRequestQueue(getApplicationContext(),new HurlStack(null, getSocketFactory()));
         queueQ.add(request);
@@ -139,7 +143,7 @@ public class LoginActitivty extends AppCompatActivity {
         CertificateFactory cf = null;
         try {
             cf = CertificateFactory.getInstance("X.509");
-            InputStream caInput = getResources().openRawResource(R.raw.alice);
+            InputStream caInput = getResources().openRawResource(R.raw.vsolv);
             Certificate ca;
             try {
                 ca = cf.generateCertificate(caInput);
